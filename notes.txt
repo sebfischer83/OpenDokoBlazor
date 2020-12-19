@@ -1,0 +1,29 @@
+Mechanics
+- wertet Züge aus
+- welche Karte ist gültig
+
+Deck
+- erstellt den Kartenstapel aus den Tischregeln
+
+PlayerDeck
+- der Kartenstapel des Spielers
+
+Card
+- symbolisiert eine Karte
+
+Rules
+- regeln für einen tisch
+- aus den tischregeln entwickeln sich die regeln für das gegenwärtige spiel
+
+Player
+- der spieler
+
+PlayerSettings
+- private Einstellungen des Spielers
+- Anzeigeformate, usw...
+
+Game
+- das gegenwärtige Spiel
+- hat die Rules
+- Deck
+- PlayerDecks

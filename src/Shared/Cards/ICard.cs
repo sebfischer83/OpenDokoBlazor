@@ -4,6 +4,11 @@
     {
         public Suit Suit { get; }
 
+        /// <summary>
+        /// The value of the card in points.
+        /// </summary>
         public int Value { get; }
+        
+        
     }
 }

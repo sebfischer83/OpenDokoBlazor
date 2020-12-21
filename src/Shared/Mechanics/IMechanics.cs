@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,24 +13,6 @@ namespace OpenDokoBlazor.Shared.Mechanics
         IPlayedCard DetermineTrickWinner(IOrderedEnumerable<IPlayedCard> cards);
     }
 
-    public class Mechanics : IMechanics
-    {
-        private readonly IRules _rules;
-
-        public Mechanics(IRules rules)
-        {
-            _rules = rules;
-        }
-
-
-        public IPlayedCard DetermineTrickWinner(IOrderedEnumerable<IPlayedCard> cards)
-        {
-
-
-            throw new Exception();
-        }
-    }
-
     public static class MechanicExtensions
     {
         public static bool IsTrumpCard(this ICard card, IRules rules)
@@ -41,7 +22,7 @@ namespace OpenDokoBlazor.Shared.Mechanics
             if (card.Suit == Suit.Diamonds)
                 return true;
             // these are always trumps
-            if (card is JackCard || card is KingCard || card is QueenCard)
+            if (card is JackCard || card is QueenCard)
                 return true;
             // ten heart is a trump
             if (card is TenCard && card.Suit == Suit.Hearts)

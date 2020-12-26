@@ -19,10 +19,10 @@ namespace OpenDokoBlazor.Shared.Game
         
         public IDeck Deck { get; }
         
-        public IPlayer Player1 { get; }
-        public IPlayer Player2 { get; }
-        public IPlayer Player3 { get; }
-        public IPlayer Player4 { get; }
+        public IPlayerDeck Player1 { get; }
+        public IPlayerDeck Player2 { get; }
+        public IPlayerDeck Player3 { get; }
+        public IPlayerDeck Player4 { get; }
 
         public IPlayerDeck GetCardsForPlayer(IPlayer player);
         
@@ -37,36 +37,31 @@ namespace OpenDokoBlazor.Shared.Game
     public class Game : IGame
     {
         private ILogger<Game> _logger;
-        private IPlayerDeck _playerDeck1;
-        private IPlayerDeck _playerDeck2;
-        private IPlayerDeck _playerDeck3;
-        private IPlayerDeck _playerDeck4;
         
         public Game(IRules rules, IPlayer player1, IPlayer player2, IPlayer player3, IPlayer player4, ILoggerFactory loggerFactory)
         {
             Rules = rules;
             _logger = loggerFactory.CreateLogger<Game>();
             Deck = OpenDokoBlazor.Shared.Deck.Deck.Create(rules, loggerFactory);
-            Player1 = player1;
-            Player2 = player2;
-            Player3 = player3;
-            Player4 = player4;
+            //Player1 = player1;
+            //Player2 = player2;
+            //Player3 = player3;
+            //Player4 = player4;
             ReSide = new List<IPlayer>();
             KontraSide = new List<IPlayer>();
             TrickNumber = 0;
             CurrentTrick = new List<IPlayedCard>();
             GameType = GameType.Default;
-
             
         }
 
         public GameType GameType { get; private set; }
         public IRules Rules { get; }
         public IDeck Deck { get; }
-        public IPlayer Player1 { get; }
-        public IPlayer Player2 { get; }
-        public IPlayer Player3 { get; }
-        public IPlayer Player4 { get; }
+        public IPlayerDeck Player1 { get; }
+        public IPlayerDeck Player2 { get; }
+        public IPlayerDeck Player3 { get; }
+        public IPlayerDeck Player4 { get; }
         public IPlayerDeck GetCardsForPlayer(IPlayer player)
         {
             throw new NotImplementedException();

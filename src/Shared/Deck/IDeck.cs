@@ -8,6 +8,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenDokoBlazor.Shared.Game;
+using OpenDokoBlazor.Shared.Player;
 
 namespace OpenDokoBlazor.Shared.Deck
 {
@@ -18,7 +20,33 @@ namespace OpenDokoBlazor.Shared.Deck
 
     public interface IPlayerDeck
     {
+        public IPlayer Player { get; }
+        public ImmutableSortedSet<ICard> Cards { get; }
 
+        public void Sort(IGame game);
+
+        public ICard GetCard(Guid id);
+    }
+
+    public class PlayerDeck : IPlayerDeck
+    {
+        public PlayerDeck(IPlayer player, IList<ICard> cards)
+        {
+            Player = player;
+            Cards = cards.ToImmutableSortedSet();
+        }
+
+        public IPlayer Player { get; }
+        public ImmutableSortedSet<ICard> Cards { get; }
+        public void Sort(IGame game)
+        {
+            
+        }
+        
+        public ICard GetCard(Guid id)
+        {
+            return new NineCard(Suit.Hearts);
+        }
     }
 
     public class Deck : IDeck
@@ -93,9 +121,9 @@ namespace OpenDokoBlazor.Shared.Deck
             for (var i = 0; i < Cards.Count; i += 4)
             {
                 list1.Add(Cards[i]);
-                list1.Add(Cards[i + 1]);
-                list1.Add(Cards[i + 2]);
-                list1.Add(Cards[i + 3]);
+                list2.Add(Cards[i + 1]);
+                list3.Add(Cards[i + 2]);
+                list4.Add(Cards[i + 3]);
             }
 
             return (list1, list2, list3, list4);

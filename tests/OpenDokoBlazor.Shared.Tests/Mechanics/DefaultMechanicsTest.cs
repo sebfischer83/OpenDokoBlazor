@@ -19,24 +19,23 @@ namespace OpenDokoBlazor.Shared.Tests.Mechanics
         [Fact]
         public void IsTrumpCardTest()
         {
-            var rules = new Mock<IRules>();
             var card = (ICard) new TenCard(Suit.Clubs);
-            card.IsTrumpCard(rules.Object).ShouldBeFalse();
+            card.IsTrumpCard(null).ShouldBeFalse();
 
             card = new NineCard(Suit.Hearts);
-            card.IsTrumpCard(rules.Object).ShouldBeFalse();
+            card.IsTrumpCard(null).ShouldBeFalse();
 
             card = new NineCard(Suit.Diamonds);
-            card.IsTrumpCard(rules.Object).ShouldBeTrue();
+            card.IsTrumpCard(null).ShouldBeTrue();
 
             card = new TenCard(Suit.Hearts);
-            card.IsTrumpCard(rules.Object).ShouldBeTrue();
+            card.IsTrumpCard(null).ShouldBeTrue();
 
             card = new KingCard(Suit.Hearts);
-            card.IsTrumpCard(rules.Object).ShouldBeFalse();
+            card.IsTrumpCard(null).ShouldBeFalse();
 
             card = new JackCard(Suit.Spades);
-            card.IsTrumpCard(rules.Object).ShouldBeTrue();
+            card.IsTrumpCard(null).ShouldBeTrue();
         }
 
         [Fact(DisplayName = "Test for a trick with one trump and three plain suits")]

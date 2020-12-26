@@ -12,6 +12,12 @@ namespace OpenDokoBlazor.Shared.Cards
         {
         }
 
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
         public override int Value => 0;
     }
 
@@ -19,6 +25,12 @@ namespace OpenDokoBlazor.Shared.Cards
     {
         public TenCard(Suit suit) : base(suit)
         {
+        }
+
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
         }
 
         public override int Value => 10;
@@ -30,6 +42,12 @@ namespace OpenDokoBlazor.Shared.Cards
         {
         }
 
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
         public override int Value => 11;
     }
 
@@ -37,6 +55,12 @@ namespace OpenDokoBlazor.Shared.Cards
     {
         public KingCard(Suit suit) : base(suit)
         {
+        }
+
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
         }
 
         public override int Value => 4;
@@ -48,6 +72,12 @@ namespace OpenDokoBlazor.Shared.Cards
         {
         }
 
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
         public override int Value => 3;
     }
 
@@ -55,6 +85,12 @@ namespace OpenDokoBlazor.Shared.Cards
     {
         public JackCard(Suit suit) : base(suit)
         {
+        }
+
+        // ReSharper disable once RedundantOverriddenMember
+        public override string ToString()
+        {
+            return base.ToString();
         }
 
         public override int Value => 2;

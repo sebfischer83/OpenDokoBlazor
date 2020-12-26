@@ -22,7 +22,7 @@ namespace OpenDokoBlazor.Shared.Mechanics
             {
                 var cardsList = cards.ToList();
                 // is only one trump card? then the winner is clear
-                var trumps = cardsList.Where(card => card.Card.IsTrumpCard(_game.Rules)).ToList();
+                var trumps = cardsList.Where(card => card.Card.IsTrumpCard(_game)).ToList();
                 if (trumps.Count == 1)
                 {
                     return trumps.First();

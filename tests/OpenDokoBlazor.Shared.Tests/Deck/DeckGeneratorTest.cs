@@ -1,14 +1,12 @@
-using Microsoft.Extensions.Logging;
+using System.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using OpenDokoBlazor.Shared.Deck;
 using OpenDokoBlazor.Shared.Rules;
-using System;
-using Xunit;
 using Shouldly;
-using System.Linq;
+using Xunit;
 
-namespace OpenDokoBlazor.Shared.Tests
+namespace OpenDokoBlazor.Shared.Tests.Deck
 {
     public class DeckGeneratorTest
     {

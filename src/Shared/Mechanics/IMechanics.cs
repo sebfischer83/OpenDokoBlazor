@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenDokoBlazor.Shared.Cards;
+using OpenDokoBlazor.Shared.Game;
 using OpenDokoBlazor.Shared.Player;
 using OpenDokoBlazor.Shared.Rules;
 
@@ -15,7 +16,7 @@ namespace OpenDokoBlazor.Shared.Mechanics
 
     public static class MechanicExtensions
     {
-        public static bool IsTrumpCard(this ICard card, IRules rules)
+        public static bool IsTrumpCard(this ICard card, IGame? rules)
         {
             #region default rules
             // any diamond card is a trump

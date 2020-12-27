@@ -63,12 +63,12 @@ class Build : NukeBuild
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             EnsureCleanDirectory(ArtifactsDirectory);
-            Console.WriteLine("echo \"test = yellow\" >> $GITHUB_ENV");
         });
 
     Target Restore => _ => _
         .Executes(() =>
         {
+            Console.WriteLine("echo \"test = yellow\" >> $GITHUB_ENV");
             DotNetRestore(s => s
                 .SetProjectFile(Solution));
         });

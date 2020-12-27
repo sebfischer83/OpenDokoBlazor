@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using OpenDokoBlazor.Server.Data;
+using Serilog;
 
 namespace OpenDokoBlazor.Server
 {
@@ -13,7 +17,13 @@ namespace OpenDokoBlazor.Server
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<OpenDokoContext>();
+                db.Database.Migrate();
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -21,6 +31,12 @@ namespace OpenDokoBlazor.Server
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseIISIntegration();
+                    webBuilder.UseSerilog((context, configuration) =>
+                    {
+                        configuration.ReadFrom.Configuration(context.Configuration);
+                        configuration.Enrich.FromLogContext();
+                    });
                 });
     }
 }

@@ -63,10 +63,7 @@ class Build : NukeBuild
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             EnsureCleanDirectory(ArtifactsDirectory);
-            if (GitHubActions.Instance != null)
-            {
-                Console.WriteLine("\"test = yellow\" >> $GITHUB_ENV");
-            }
+            Console.WriteLine("echo \"test = yellow\" >> $GITHUB_ENV");
         });
 
     Target Restore => _ => _

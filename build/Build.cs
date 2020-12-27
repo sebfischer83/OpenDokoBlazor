@@ -1,7 +1,9 @@
 #nullable enable
 using System.Linq;
+using Colorful;
 using Nuke.Common;
 using Nuke.Common.CI;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
@@ -61,6 +63,10 @@ class Build : NukeBuild
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             EnsureCleanDirectory(ArtifactsDirectory);
+            if (GitHubActions.Instance != null)
+            {
+                Console.WriteLine("\"test = yellow\" >> $GITHUB_ENV");
+            }
         });
 
     Target Restore => _ => _

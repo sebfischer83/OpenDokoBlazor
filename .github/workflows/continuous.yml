@@ -23,3 +23,5 @@ jobs:
         dotnet-version: 5.x
     - name: Run './build.cmd Compile'
       run: ./build.cmd Compile
+    - name: Environment Printer
+      uses: managedkaos/print-env@v1.0

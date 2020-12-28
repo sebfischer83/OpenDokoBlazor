@@ -65,6 +65,7 @@ namespace OpenDokoBlazor.Server
             AddAuth(services);
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
+            services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddAntiforgery();
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -110,7 +111,7 @@ namespace OpenDokoBlazor.Server
                     options.SetUserinfoEndpointUris("/Account/UserInfo");
 
                     // Enable the password flow.
-                    options.AllowPasswordFlow();
+                    options.AllowPasswordFlow().AllowRefreshTokenFlow();
                     // Accept anonymous clients (i.e clients that don't send a client_id).
                     options.AcceptAnonymousClients();
 
@@ -121,6 +122,9 @@ namespace OpenDokoBlazor.Server
 
                     // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                     options.UseAspNetCore()
+                        .EnableAuthorizationEndpointPassthrough()
+                        .EnableLogoutEndpointPassthrough()
+                        .EnableStatusCodePagesIntegration()
                         .EnableTokenEndpointPassthrough()
                         .DisableTransportSecurityRequirement(); // During development, you can disable the HTTPS requirement.
                 });
@@ -230,7 +234,9 @@ namespace OpenDokoBlazor.Server
                     }
                 });
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMvcWithDefaultRoute();
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,0 +1,50 @@
+﻿@page "/Login"
+@layout AuthLayout
+<div class="col-sm-6 login-section-wrapper">
+    <div class="brand-wrapper">
+        <img src="img/logo_transparent_low.png" alt="logo" class="logo">
+    </div>
+    <div class="login-wrapper">
+        <h1 class="login-title">@Loc["Login"]</h1>
+        <Validations Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@UserData" @ref="@_validations">
+            <Validation Validator="@ValidationRule.IsEmail">
+                <Field>
+                    <FieldLabel>@Loc["Email"]</FieldLabel>
+                    <TextEdit Placeholder=@Loc["EnterEmail"] Role="TextRole.Email" @bind-Text="@UserData.UserName">
+                        <Feedback>
+                            <ValidationSuccess>@Loc["EmailValid"]</ValidationSuccess>
+                            <ValidationError>@Loc["EmailInvalid"]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+            <Validation Validator="@ValidationRule.IsNotEmpty">
+                <Field>
+                    <FieldLabel>@Loc["Password"]</FieldLabel>
+                    <TextEdit Placeholder="Passwort" Role="TextRole.Password" @bind-Text="@UserData.Password">
+                        <Feedback>
+                            <ValidationSuccess>@Loc["PasswordValid"]</ValidationSuccess>
+                            <ValidationError>@Loc["PasswordInvalid"]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+            <Field Horizontal="true" JustifyContent="JustifyContent.Start">
+                <FieldBody ColumnSize="ColumnSize.Is10.Is2">
+                    <Button Color="Color.Primary" Clicked="@SubmitAsync">Submit</Button>
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true" JustifyContent="JustifyContent.Start">
+                <FieldBody ColumnSize="ColumnSize.Is10.Is2">
+                    <Alert Color="Color.Warning" @ref="_alert">
+                        <AlertMessage>@Loc["ErrorConnect"]</AlertMessage>
+                        <AlertDescription>@Loc["ErrorConnectDescription"]</AlertDescription>
+                        <CloseButton Clicked="HideAlert" />
+                    </Alert>
+                </FieldBody>
+            </Field>
+
+        </Validations>
+        <p class="login-wrapper-footer-text">Don't have an account? <a href="#!" class="text-reset">Register here</a></p>
+    </div>
+</div>

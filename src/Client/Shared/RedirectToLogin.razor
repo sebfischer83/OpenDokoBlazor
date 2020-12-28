@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string signInUrl = "login";
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        if (returnUrl != signInUrl && (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated))
+        {
+            Console.WriteLine(returnUrl);
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                Navigation.NavigateTo(signInUrl, true);
+            }
+            else
+            {
+                Navigation.NavigateTo($"{signInUrl}?returnUrl={returnUrl}", true);
+            }
+        }
+    }
+
+}

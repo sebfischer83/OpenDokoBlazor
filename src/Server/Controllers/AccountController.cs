@@ -35,6 +35,7 @@ namespace OpenDokoBlazor.Server.Controllers
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
+        [Route("/Account/Register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
             EnsureDatabaseCreated(_applicationDbContext);
@@ -58,6 +59,7 @@ namespace OpenDokoBlazor.Server.Controllers
             return BadRequest(ModelState);
         }
 
+        [Route("/Account/Userinfo")]
         [HttpGet(), Produces("application/json")]
         public async Task<ActionResult<UserInfoViewModel>> Userinfo()
         {

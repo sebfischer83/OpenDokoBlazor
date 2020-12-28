@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+<div class="container-fluid">
+    <div class="row">
+        @Body
+        <div class="col-sm-6 px-0 d-none d-sm-block">
+            <picture>
+                <source srcset="img/login.webp" type="image/webp">
+                <source srcset="img/login.jpg" type="image/jpeg">
+                <img src="img/login.jpg" alt="Alt Text!" class="login-img">
+            </picture>
+        </div>
+    </div>
+</div>

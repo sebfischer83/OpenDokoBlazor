@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Blazorise;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using OpenDokoBlazor.Client.Services.Auth;
 using Stl.Fusion.Authentication;
+using IAuthService = OpenDokoBlazor.Client.Services.Auth.IAuthService;
 
 namespace OpenDokoBlazor.Client.Pages.Auth
 {
@@ -17,7 +19,7 @@ namespace OpenDokoBlazor.Client.Pages.Auth
         private IStringLocalizer<LoginPage> Loc { get; set; }
 
         [Inject]
-        private ILoginService LoginService { get; set; }
+        private IAuthService AuthService { get; set; }
 
         [Inject]
         private NavigationManager NavigationManager { get; set; }
@@ -48,15 +50,23 @@ namespace OpenDokoBlazor.Client.Pages.Auth
             if (_validations.ValidateAll())
             {
                 _validations.ClearAll();
-                await LoginService.Login(UserData.UserName, UserData.Password, true);
-                //if (await LoginService.Login(UserData))
-                //{
-                //    NavigationManager.NavigateTo("/");
-                //}
-                //else
-                //{
-                //    alert.Show();
-                //}
+                var success = await AuthService.Login(UserData.UserName, UserData.Password, true);
+                if (success)
+                {
+                    var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+                    if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var returnUrl))
+                    {
+                        NavigationManager.NavigateTo(returnUrl);
+                    }
+                    else
+                    {
+                        NavigationManager.NavigateTo("/");
+                    }
+                }
+                else
+                {
+                    _alert.Show();
+                }
             }
         }
     }

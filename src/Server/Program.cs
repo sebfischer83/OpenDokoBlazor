@@ -23,6 +23,11 @@ namespace OpenDokoBlazor.Server
                 var db = scope.ServiceProvider.GetRequiredService<OpenDokoContext>();
                 db.Database.Migrate();
             }
+            using (var scope = host.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<InMemoryContext>();
+                db.Database.EnsureCreated();
+            }
             host.Run();
         }
 

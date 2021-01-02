@@ -49,6 +49,12 @@ namespace OpenDokoBlazor.Server
                 builder.UseSqlServer(configuration.GetConnectionString("connectionString"));
                 builder.UseOpenIddict();
             });
+            
+            services.AddDbContext<InMemoryContext>((provider, builder) =>
+            {
+                var configuration = provider.GetService<IConfiguration>();
+                builder.UseInMemoryDatabase("inmemorydb");
+            });
 
             services.AddSingleton(new PresenceService.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
             services.AddFusion();

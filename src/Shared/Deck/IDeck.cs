@@ -33,7 +33,7 @@ namespace OpenDokoBlazor.Shared.Deck
         public PlayerDeck(IPlayer player, IList<ICard> cards)
         {
             Player = player;
-            Cards = cards.ToImmutableSortedSet();
+            Cards = cards.ToImmutableSortedSet(new CardDefaultComparer());
         }
 
         public IPlayer Player { get; }

@@ -9,12 +9,16 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using OpenDokoBlazor.Server.Classes;
 using OpenDokoBlazor.Server.Data;
 using OpenDokoBlazor.Server.Data.Models;
 using OpenDokoBlazor.Server.Services;
@@ -56,6 +60,7 @@ namespace OpenDokoBlazor.Server
                 builder.UseInMemoryDatabase("inmemorydb");
             });
 
+           
             services.AddSingleton(new PresenceService.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
             services.AddFusion();
             var fusion = services.AddFusion();
@@ -69,13 +74,19 @@ namespace OpenDokoBlazor.Server
                 .AddServicesFrom(Assembly.GetExecutingAssembly());
 
             AddAuth(services);
+            services.AddHealthChecksUI().AddInMemoryStorage();
+            services.AddHealthChecks().AddSqlServer(Configuration.GetConnectionString("connectionString"), "SELECT 1",
+                "sql", HealthStatus.Unhealthy, new string[] { "db", "sql", "sqlserver" });
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddAntiforgery();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.Configure<OpenDokoOptions>(Configuration.GetSection(OpenDokoOptions.Identifier));
+            services.AddSingleton<TableManager>();
             fusionAuth.AddBlazor(o => { });
+            services.AddHostedService<TableManagerStartupService>();
             AddSwagger(services);
         }
 
@@ -118,13 +129,12 @@ namespace OpenDokoBlazor.Server
 
                     // Enable the password flow.
                     options.AllowPasswordFlow().AllowRefreshTokenFlow();
-                    // Accept anonymous clients (i.e clients that don't send a client_id).
                     options.AcceptAnonymousClients();
 
                     // Register the signing and encryption credentials.
                     options.AddDevelopmentEncryptionCertificate()
                         .AddDevelopmentSigningCertificate();
-                    options.RegisterScopes(OpenIddictConstants.Scopes.Email);
+                    options.RegisterScopes(OpenIddictConstants.Scopes.Email, OpenIddictConstants.Scopes.Roles, OpenIddictConstants.Scopes.Profile);
 
                     // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                     options.UseAspNetCore()
@@ -138,11 +148,12 @@ namespace OpenDokoBlazor.Server
                 {
                     // Import the configuration from the local OpenIddict server instance.
                     options.UseLocalServer();
-
+                    
                     // Register the ASP.NET Core host.
                     options.UseAspNetCore();
                 });
             });
+
         }
 
         private static void AddSwagger(IServiceCollection services)
@@ -246,6 +257,12 @@ namespace OpenDokoBlazor.Server
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("healthz", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecksUI();
                 endpoints.MapFusionWebSocketServer();
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();

@@ -1,0 +1,27 @@
+﻿@inherits LiveComponentBase<ChatList.Model, ChatList.LocalsModel>
+
+@{
+    var locals = Locals.Value;
+    var state = State.LastValue;
+    var lastPage = state.LastPage;
+    var error = State.Error;
+}
+
+<Column ColumnSize="ColumnSize.Is3">
+
+    @*@foreach (var message in lastPage.Messages)
+        {
+            <li class="message">
+                <div class="avatar">@lastPage.Users[message.UserId].Name</div>
+                <div class="text_wrapper">
+                    <div class="text">@message.Text</div>
+                </div>
+            </li>
+        }*@
+    @*<input class="" placeholder="Type your message here..." @bind-value="locals.Message" />*@
+    
+
+</Column>
+
+
+

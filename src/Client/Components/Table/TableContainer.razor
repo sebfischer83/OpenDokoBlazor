@@ -1,0 +1,15 @@
+﻿@inherits LiveComponentBase<TableContainer.Model>
+@using OpenDokoBlazor.Client.Pages
+@using Castle.Components.DictionaryAdapter
+
+@{
+    var state = State.LastValue;
+    var tables = state.Tables;
+    var error = State.Error;
+}
+@*<StatefulComponentState Component="@this" />*@
+
+@foreach (var table in tables)
+{
+    <TableElement Model="@table"></TableElement>
+}

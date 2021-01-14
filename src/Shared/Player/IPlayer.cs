@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenDokoBlazor.Shared.Cards;
 
 namespace OpenDokoBlazor.Shared.Player
 {
     public interface IPlayer
     {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
     }
 
-    public interface IPlayedCard
+    public class Player : IPlayer
     {
-        public IPlayer Player { get; }
+        public Player(Guid id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
 
-        public ICard Card { get; }
-        
-        public int Order { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -47,7 +48,7 @@ namespace OpenDokoBlazor.Server.Controllers
                     return StatusCode(StatusCodes.Status409Conflict);
                 }
 
-                user = new OpenDokoUser() { UserName = model.Email, Email = model.Email };
+                user = new OpenDokoUser() { UserName = model.Name, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -88,6 +89,8 @@ namespace OpenDokoBlazor.Server.Controllers
                 claims[OpenIddictConstants.Claims.EmailVerified] = await _userManager.IsEmailConfirmedAsync(user);
             }
 
+            claims[OpenIddictConstants.Claims.Username] = await _userManager.GetUserNameAsync(user);
+            Trace.WriteLine("hier");
             if (User.HasScope(OpenIddictConstants.Permissions.Scopes.Phone))
             {
                 claims[OpenIddictConstants.Claims.PhoneNumber] = await _userManager.GetPhoneNumberAsync(user);

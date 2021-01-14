@@ -15,6 +15,7 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Hosting;
 using OpenDokoBlazor.Client.Services.Auth;
@@ -31,7 +32,10 @@ namespace OpenDokoBlazor.Client
         public static Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredSessionStorage();
             ConfigureServices(builder.Services, builder);
+
             builder.Services
                 .AddBlazorise(options =>
                 {
@@ -45,8 +49,7 @@ namespace OpenDokoBlazor.Client
 
             builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddBlazoredLocalStorage();
-            builder.Services.AddBlazoredSessionStorage();
+
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthMessageHandler>();
             builder.Services.AddHttpClient("OpenDoko.ServerAPI")
@@ -66,7 +69,7 @@ namespace OpenDokoBlazor.Client
                 var factory = provider.GetRequiredService<IHttpClientFactory>();
                 return factory.CreateClient("OpenDoko.ServerAPI");
             });
-            
+
             var host = builder.Build();
             host.Services
                 .UseBootstrapProviders()
@@ -84,17 +87,17 @@ namespace OpenDokoBlazor.Client
 
         public static void ConfigureServices(IServiceCollection services, WebAssemblyHostBuilder builder)
         {
-            builder.Logging.SetMinimumLevel(LogLevel.Warning);
+            builder.Logging.SetMinimumLevel(LogLevel.Error);
 
             var baseUri = new Uri(builder.HostEnvironment.BaseAddress);
             var apiBaseUri = new Uri($"{baseUri}api/");
-
+            services.AddScoped<FusionTokenService>();
+            
             var fusion = services.AddFusion();
             var fusionClient = fusion.AddRestEaseClient(
                 (c, o) =>
                 {
                     o.BaseUri = baseUri;
-                    o.MessageLogLevel = LogLevel.Information;
                 }).ConfigureHttpClientFactory(
                 (c, name, o) =>
                 {
@@ -103,8 +106,13 @@ namespace OpenDokoBlazor.Client
                     o.HttpClientActions.Add(client =>
                     {
                         client.BaseAddress = clientBaseUri;
-                        //var s = c.GetService<AuthService>();
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", s.GetToken().Result);
+                        var serviceScopeFactory = c.GetService<IServiceScopeFactory>();
+                        using (var scope = serviceScopeFactory.CreateScope())
+                        {
+                            var token = scope.ServiceProvider.GetService<FusionTokenService>();
+                            client.DefaultRequestHeaders.Authorization =
+                                new AuthenticationHeaderValue("Bearer", token.GetToken());
+                        }
                     });
                 });
             var fusionAuth = fusion.AddAuthentication().AddRestEaseClient().AddBlazor();

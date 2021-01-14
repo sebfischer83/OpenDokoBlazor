@@ -14,5 +14,6 @@ namespace OpenDokoBlazor.Shared.Rules
     {
         public int CardsPerPlayer { get; }
 
+        public bool DulleBeatsDulle { get; set; }
     }
 }

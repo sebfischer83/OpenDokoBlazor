@@ -15,6 +15,7 @@ using OpenDokoBlazor.Server.Data;
 using OpenDokoBlazor.Server.Helper;
 using OpenDokoBlazor.Shared.Services;
 using OpenDokoBlazor.Shared.ViewModels.Chat;
+using OpenIddict.Abstractions;
 using Stl.Async;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
@@ -47,13 +48,15 @@ namespace OpenDokoBlazor.Server.Services
         {
             await using var dbContext = CreateDbContext();
 
-            var user = new ChatUser() { Name = name };
+            var user = new ChatUser() { Name = _httpContextAccessor.HttpContext.User.GetClaim(OpenIddictConstants.Claims.Username).ToString() };
             await dbContext.ChatUsers.AddAsync(user, cancellationToken).ConfigureAwait(false);
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            // Invalidation
-            Computed.Invalidate(() => GetUserAsync(user.Id, CancellationToken.None));
-            Computed.Invalidate(() => GetUserCountAsync(CancellationToken.None));
+            using (Computed.Invalidate())
+            {
+                GetUserAsync(user.Id, CancellationToken.None).Ignore();
+                GetUserCountAsync(CancellationToken.None).Ignore();
+            }
             return user;
         }
 
@@ -67,7 +70,8 @@ namespace OpenDokoBlazor.Server.Services
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             // Invalidation
-            Computed.Invalidate(() => GetUserAsync(id, CancellationToken.None));
+            using (Computed.Invalidate())
+                GetUserAsync(id, CancellationToken.None).Ignore();
             return user;
         }
 
@@ -75,7 +79,7 @@ namespace OpenDokoBlazor.Server.Services
         {
             await using var dbContext = CreateDbContext();
 
-            await GetUserAsync(userId, cancellationToken).ConfigureAwait(false); // Check to ensure the user exists
+            //await GetUserAsync(userId, cancellationToken).ConfigureAwait(false); // Check to ensure the user exists
             var message = new ChatMessage()
             {
                 CreatedAt = DateTime.UtcNow,
@@ -86,7 +90,8 @@ namespace OpenDokoBlazor.Server.Services
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             // Invalidation
-            Computed.Invalidate(EveryChatTail);
+            using (Computed.Invalidate())
+                EveryChatTail().Ignore();
             return message;
         }
 
@@ -113,10 +118,12 @@ namespace OpenDokoBlazor.Server.Services
             return Task.FromResult(Math.Max(0, userCount));
         }
 
-        public virtual Task<ChatUser> GetUserAsync(long id, CancellationToken cancellationToken = default)
+        public virtual async Task<ChatUser> GetUserAsync(long id, CancellationToken cancellationToken = default)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
-            return new Task<ChatUser>(() => new ChatUser() {Id = 1, Name = userId});
+            await using var dbContext = CreateDbContext();
+            var user = await dbContext.ChatUsers.FindAsync(id);
+
+            return user;
         }
 
         public virtual async Task<ChatPage> GetChatTailAsync(int length, CancellationToken cancellationToken = default)
@@ -138,7 +145,7 @@ namespace OpenDokoBlazor.Server.Services
             var users = await Task.WhenAll(userTasks).ConfigureAwait(false);
 
             // Composing the end result
-            return new ChatPage(messages, users.ToDictionary(u => u.Id));
+            return new ChatPage(messages, users.ToDictionary(user => user.Id));
         }
 
         public virtual Task<ChatPage> GetChatPageAsync(long minMessageId, long maxMessageId, CancellationToken cancellationToken = default)

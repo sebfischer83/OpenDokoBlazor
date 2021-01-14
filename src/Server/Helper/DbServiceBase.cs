@@ -20,7 +20,7 @@ namespace OpenDokoBlazor.Server.Helper
         protected TDbContext CreateDbContext()
         {
             var serviceScope = Services.CreateScope();
-                var context = serviceScope.ServiceProvider.GetService<TDbContext>();
+            var context = serviceScope.ServiceProvider.GetService<TDbContext>();
             return context;
         }
     }

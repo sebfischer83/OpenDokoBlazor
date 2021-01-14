@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenDokoBlazor.Server.Data;
+using OpenIddict.Abstractions;
 using Serilog;
 
 namespace OpenDokoBlazor.Server

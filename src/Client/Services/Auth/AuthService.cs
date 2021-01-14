@@ -30,7 +30,7 @@ namespace OpenDokoBlazor.Client.Services.Auth
         private readonly ISessionStorageService _sessionStorageService;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly HttpClient _httpClient;
-        private const string StorageKey = "token";
+        public const string StorageKey = "token";
         
         public AuthService(IServiceProvider serviceProvider,
             ILocalStorageService localStorageService, ISessionStorageService sessionStorageService, AuthenticationStateProvider authenticationStateProvider,
@@ -51,7 +51,7 @@ namespace OpenDokoBlazor.Client.Services.Auth
             list.Add(new KeyValuePair<string?, string?>("grant_type", "password"));
             list.Add(new KeyValuePair<string?, string?>("username", email));
             list.Add(new KeyValuePair<string?, string?>("password", password));
-            list.Add(new KeyValuePair<string?, string?>("scope", "openid offline_access email"));
+            list.Add(new KeyValuePair<string?, string?>("scope", "openid offline_access email profile roles"));
             var result = await _httpClient.PostAsync("connect/token", new FormUrlEncodedContent(list));
             if (result.IsSuccessStatusCode)
             {

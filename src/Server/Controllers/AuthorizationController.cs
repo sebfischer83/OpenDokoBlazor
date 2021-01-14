@@ -61,7 +61,7 @@ namespace OpenDokoBlazor.Server.Controllers
             var request = HttpContext.GetOpenIddictServerRequest();
             if (request!.IsPasswordGrantType())
             {
-                var user = await _userManager.FindByNameAsync(request.Username);
+                var user = await _userManager.FindByEmailAsync(request.Username);
                 if (user == null)
                 {
                     var properties = new AuthenticationProperties(new Dictionary<string, string>
@@ -91,6 +91,17 @@ namespace OpenDokoBlazor.Server.Controllers
                 // Create a new ClaimsPrincipal containing the claims that
                 // will be used to create an id_token, a token or a code.
                 var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                //var ticket = new AuthenticationTicket(principal, properties,
+                //    OpenIdConnectServerDefaults.AuthenticationScheme);
+                //var identity = (ClaimsIdentity)principal.Identity;
+                
+                var email = new Claim(OpenIddictConstants.Claims.Email, user.Email);
+                email.SetDestinations(OpenIddictConstants.Destinations.AccessToken);
+                ((ClaimsIdentity) principal.Identity).AddClaim(email);
+
+                var name = new Claim(OpenIddictConstants.Claims.Username, user.UserName);
+                name.SetDestinations(OpenIddictConstants.Destinations.AccessToken);
+                ((ClaimsIdentity)principal.Identity).AddClaim(name);
 
                 // Set the list of scopes granted to the client application.
                 principal.SetScopes(new[]

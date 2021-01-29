@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenDokoBlazor.Shared.Game;
 using OpenDokoBlazor.Shared.Table;
 
 namespace OpenDokoBlazor.Server.Classes
@@ -21,10 +22,15 @@ namespace OpenDokoBlazor.Server.Classes
             _openDokoOptions = openDokoOptions;
             _tables = new();
         }
-
+        
         public ITable this[Guid id] => _tables[id];
 
         public ITable this[int id] => _tables.First(pair => pair.Value.Order == id).Value;
+
+        public bool IsPlayerAlreadyInGame(Guid playerId)
+        {
+            return _tables.Any(pair => pair.Value.GetPlayers().Any(player => player.Id == playerId));
+        }
 
         public void Init()
         {
@@ -33,6 +39,17 @@ namespace OpenDokoBlazor.Server.Classes
                 var table = new Table(_loggerFactory, i + 1);
                 _tables.Add(table.Id, table);
             }
+            for (int i = 0; i < _openDokoOptions.Value.NumberOfSoloTables; i++)
+            {
+                var table = new Table(_loggerFactory, i + 1, true);
+                _tables.Add(table.Id, table);
+            }
+        }
+
+        public IGame GetGameForPlayer(Guid playerId)
+        {
+            var table = _tables.Select(pair => pair.Value).FirstOrDefault(pair => pair.GetPlayers().Any(player => player.Id == playerId));
+            return table?.CurrentGame;
         }
 
         public IEnumerator<ITable> GetEnumerator()

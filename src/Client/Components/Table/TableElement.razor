@@ -1,3 +1,9 @@
 ﻿@using Excubo.Blazor.Canvas
-<h3>Tisch @Model.Order.ToString()</h3>
-<Canvas @ref="_helperCanvas" width="300px" height="300px"></Canvas>
+<div style="width: 340px">
+    <h3>Tisch @Model?.Order.ToString() @((Model?.SoloTable ?? false) ? "Demo" : "")</h3>
+    <Canvas @ref="_helperCanvas" width="300px" height="300px"></Canvas>
+    @if (Model?.PlayerList.Count < 4)
+    {
+        <Button Color="Color.Link" Clicked="() => OnParticipatEventCallback.InvokeAsync(Model.Id)">Teilnehmen</Button>
+    }
+</div>

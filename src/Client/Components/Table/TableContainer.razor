@@ -9,7 +9,9 @@
 }
 @*<StatefulComponentState Component="@this" />*@
 
-@foreach (var table in tables)
-{
-    <TableElement Model="@table"></TableElement>
-}
+<Row>
+    @foreach (var table in tables)
+    {
+        <TableElement Model="@table"  OnParticipatEventCallback="@UserGoToTable"></TableElement>
+    }
+</Row>

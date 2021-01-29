@@ -1,0 +1,15 @@
+﻿@using OpenDokoBlazor.Shared.ViewModels.Card
+@if (Style.SupportSvg)
+{
+    <img id="@CardViewModel.Id" class=@($"playCard {(Placeable ? "placeable" : "notplaceable")}") type="image/svg+xml" src="@Style.GetSvgSrc(CardViewModel)" />
+}
+else
+{
+    <picture id="@CardViewModel.Id" class=@($"playCard {(Placeable ? "placeable" : "notplaceable")}")>
+        @foreach (var pair in Style.GetImageSrcSetLinks(CardViewModel))
+        {
+            <source srcset="@pair.Src" type="@pair.Type">
+        }
+        <img src="@Style.GetImageSrc(CardViewModel)">
+    </picture>
+}

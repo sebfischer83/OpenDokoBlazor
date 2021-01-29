@@ -1,0 +1,14 @@
+﻿@if (Style.SupportSvg)
+{
+    <img class=@($"otherCard") type="image/svg+xml" src="@Style.GetBackSvgSrc()" />
+}
+else
+{
+    <picture class=@($"otherCard")>
+        @foreach (var pair in Style.GetBackImageSrcSetLinks())
+        {
+            <source srcset="@pair.Src" type="@pair.Type">
+        }
+        <img src="@Style.GetBackImageSrc()">
+    </picture>
+}

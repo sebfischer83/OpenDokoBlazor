@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Hosting;
+using OpenDokoBlazor.Client.Components.Card;
 using OpenDokoBlazor.Client.Services.Auth;
 using Stl.DependencyInjection;
 using Stl.Fusion;
@@ -49,7 +50,7 @@ namespace OpenDokoBlazor.Client
 
             builder.Services.AddScoped<AuthenticationStateProvider, AuthProvider>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-
+            builder.Services.AddScoped<ICardStyle, FrenchCardSryle>();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthMessageHandler>();
             builder.Services.AddHttpClient("OpenDoko.ServerAPI")
@@ -94,6 +95,7 @@ namespace OpenDokoBlazor.Client
             services.AddScoped<FusionTokenService>();
             
             var fusion = services.AddFusion();
+            fusion.AddAuthentication();
             var fusionClient = fusion.AddRestEaseClient(
                 (c, o) =>
                 {

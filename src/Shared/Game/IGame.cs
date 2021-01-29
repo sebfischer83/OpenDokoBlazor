@@ -25,11 +25,12 @@ namespace OpenDokoBlazor.Shared.Game
         public IPlayerDeck Player3 { get; }
         public IPlayerDeck Player4 { get; }
 
-        public IPlayerDeck GetCardsForPlayer(IPlayer player);
+        public IPlayerDeck GetCardsForPlayer(Guid playerId);
 
         public IList<IPlayer> ReSide { get; }
         public IList<IPlayer> KontraSide { get; }
 
+        public List<Guid> GetPlacableCards(Guid playerId);
         public int TrickNumber { get; }
 
         public IList<IPlayedCard> CurrentTrick { get; }
@@ -69,9 +70,22 @@ namespace OpenDokoBlazor.Shared.Game
         public IPlayerDeck Player2 => _playerDecks[2];
         public IPlayerDeck Player3 => _playerDecks[3];
         public IPlayerDeck Player4 => _playerDecks[4];
-        public IPlayerDeck GetCardsForPlayer(IPlayer player)
+        public IPlayerDeck GetCardsForPlayer(Guid playerId)
         {
-            return _playerDecks.FirstOrDefault(pair => pair.Value.Player.Id == player.Id).Value;
+            var val =  _playerDecks.FirstOrDefault(pair => pair.Value.Player.Id == playerId).Value;
+            return val;
+        }
+
+        public List<Guid> GetPlacableCards(Guid playerId)
+        {
+            var cards = GetCardsForPlayer(playerId).Cards;
+            if (CurrentTrick.Count == 0)
+            {
+                return new List<Guid>(cards.Select(card => card.Id));
+            }
+
+            cards = _mechanics.GetAllPlaceableCards(_playerDecks.First(pair => pair.Value.Player.Id == playerId).Value.Player).ToList();
+            return new List<Guid>(cards.Select(card => card.Id));
         }
 
         public IList<IPlayer> ReSide { get; }

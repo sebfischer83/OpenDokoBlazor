@@ -21,7 +21,7 @@ namespace OpenDokoBlazor.Shared.Deck
     public interface IPlayerDeck
     {
         public IPlayer Player { get; }
-        public ImmutableSortedSet<ICard> Cards { get; }
+        public List<ICard> Cards { get; }
 
         public void Sort(IGame game);
 
@@ -33,11 +33,13 @@ namespace OpenDokoBlazor.Shared.Deck
         public PlayerDeck(IPlayer player, IList<ICard> cards)
         {
             Player = player;
-            Cards = cards.ToImmutableSortedSet(new CardDefaultComparer());
+            var t = cards.ToList();
+            t.Sort(new CardDefaultComparer());
+            Cards = t;
         }
 
         public IPlayer Player { get; }
-        public ImmutableSortedSet<ICard> Cards { get; }
+        public List<ICard> Cards { get; }
         public void Sort(IGame game)
         {
             

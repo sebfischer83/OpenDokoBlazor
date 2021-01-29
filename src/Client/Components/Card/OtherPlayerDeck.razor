@@ -1,0 +1,6 @@
+﻿<div class=@($"otherCardDeckWrapper {Enum.GetName(typeof(OtherPlayerPosition), PlayerPosition)?.ToLowerInvariant()}")>
+    @for (int i = 0; i < 12; i++)
+    {
+        <OtherCard></OtherCard>
+    }
+</div>

@@ -1,0 +1,47 @@
+﻿@page "/table/{TableId}"
+@using System.Text.Json.Serialization
+@using System.Text.Json
+@using Microsoft.Extensions.Logging
+@using OpenDokoBlazor.Client.Components.Card
+@using OpenDokoBlazor.Client.Components.Table
+@inherits LiveComponentBase<TablePage.Model>
+
+@{
+    var state = State.LastValue;
+    var deck = state?.PlayerDeck;
+    var placableCards = state?.PlaceableCards;
+    var isStarted = state?.IsGameStarted ?? false;
+    var error = State.Error;
+    if (error != null)
+    {
+        Logger.LogError(error, error.Message);
+    }
+}
+
+@if (error != null)
+{
+    <span>@error.Message</span>
+}
+
+@if (!isStarted)
+{
+
+}
+<div class="grid-container">
+    <div class="Player3">
+        <OtherPlayerDeck PlayerPosition="OtherPlayerPosition.Top"></OtherPlayerDeck>
+    </div>
+    <div class="Player2">
+        <OtherPlayerDeck PlayerPosition="OtherPlayerPosition.Left"></OtherPlayerDeck>
+    </div>
+    <div class="Player4">
+        <OtherPlayerDeck PlayerPosition="OtherPlayerPosition.Right"></OtherPlayerDeck>
+    </div>
+    <div class="Player1">
+        <PlayerCardDeck Model="@deck" Placeable="@placableCards"></PlayerCardDeck>
+    </div>
+    <div class="Table">
+        <GamingTable></GamingTable>
+    </div>
+</div>
+

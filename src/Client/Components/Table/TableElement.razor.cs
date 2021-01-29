@@ -13,6 +13,9 @@ namespace OpenDokoBlazor.Client.Components.Table
         [Parameter]
         public TableViewModel? Model { get; set; }
 
+        [Parameter] 
+        public EventCallback<Guid> OnParticipatEventCallback { get; set; }
+
         private Canvas? _helperCanvas;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -29,25 +32,29 @@ namespace OpenDokoBlazor.Client.Components.Table
                 return;
             await using var ctx1 = await _helperCanvas.GetContext2DAsync();
             await ctx1.ClearRectAsync(0, 0, 300, 300);
-            await ctx1.FillStyleAsync("gray");
-            await ctx1.FillRectAsync(40, 40, 220, 200);
+            //await ctx1.FillStyleAsync("gray");
+            //await ctx1.FillRectAsync(0, 0, 300, 300);
             await ctx1.FontAsync("18px solid");
-            int dummyEntries = 4;
             int posY = 18;
             if (Model != null)
             {
-                dummyEntries -= Model.PlayerList.Count;
-                foreach (var player in Model.PlayerList)
+                for (int i = 0; i < 4; i++)
                 {
-                    await ctx1.FillTextAsync(player, 0, posY);
+                    var player = Model.PlayerList.FirstOrDefault(model => model.Order == i);
+                    if (player != null)
+                        await ctx1.FillTextAsync(player.Name, 0, posY);
+                    else
+                        await ctx1.FillTextAsync("leer", 0, posY);
                     posY += 20;
                 }
             }
-
-            for (int i = 0; i < dummyEntries; i++)
+            else
             {
-                await ctx1.FillTextAsync("leer", 0, posY);
-                posY += 20;
+                for (int i = 0; i < 4; i++)
+                {
+                    await ctx1.FillTextAsync("leer", 0, posY);
+                    posY += 20;
+                }
             }
         }
 

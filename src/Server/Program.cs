@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenDokoBlazor.Server.Data;
 using OpenIddict.Abstractions;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Json;
 
 namespace OpenDokoBlazor.Server
 {
@@ -36,12 +38,17 @@ namespace OpenDokoBlazor.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseIISIntegration();
                     webBuilder.UseSerilog((context, configuration) =>
                     {
                         configuration.ReadFrom.Configuration(context.Configuration);
                         configuration.Enrich.FromLogContext();
+                        configuration.WriteTo.Async(sinkConfiguration =>
+                        {
+                            sinkConfiguration.File("logs\\log.txt", rollingInterval: RollingInterval.Day);
+                        });
                     });
                 });
     }

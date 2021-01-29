@@ -10,5 +10,6 @@ namespace OpenDokoBlazor.Server
         public const string Identifier = "OpenDoko";
 
         public int NumberOfTables { get; set; }
+        public int NumberOfSoloTables { get; set; }
     }
 }

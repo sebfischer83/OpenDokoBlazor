@@ -1,0 +1,9 @@
+﻿<div class="cardDeckWrapper">
+    @if (Model != null && Model.Cards != null)
+    {
+        @foreach (var card in Model.Cards)
+        {
+            <PlayerCard CardViewModel="@card" Placeable="@IsCardPlaceable(card)"></PlayerCard>
+        }
+    }
+</div>

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using OpenDokoBlazor.Server.Classes;
@@ -24,11 +25,13 @@ using OpenDokoBlazor.Server.Data.Models;
 using OpenDokoBlazor.Server.Services;
 using OpenIddict.Abstractions;
 using Serilog;
+using Serilog.AspNetCore;
 using Stl.DependencyInjection;
 using Stl.Fusion;
 using Stl.Fusion.Authentication;
 using Stl.Fusion.Blazor;
 using Stl.Fusion.Client;
+using Stl.Fusion.EntityFramework;
 using Stl.Fusion.Server;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -36,8 +39,11 @@ namespace OpenDokoBlazor.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IWebHostEnvironment Env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
+            Env = environment;
             Configuration = configuration;
         }
 
@@ -47,20 +53,31 @@ namespace OpenDokoBlazor.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RequestLoggingOptions>(o =>
+            {
+                o.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+                {
+                    diagnosticContext.Set("RemoteIpAddress", httpContext?.Connection?.RemoteIpAddress?.MapToIPv4());
+                };
+            });
+            services.AddLogging(logging => {
+                if (Env.IsDevelopment())
+                    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
+            });
+
             services.AddDbContext<OpenDokoContext>((provider, builder) =>
             {
                 var configuration = provider.GetService<IConfiguration>();
                 builder.UseSqlServer(configuration.GetConnectionString("connectionString"));
                 builder.UseOpenIddict();
             });
-            
+
             services.AddDbContext<InMemoryContext>((provider, builder) =>
             {
                 var configuration = provider.GetService<IConfiguration>();
                 builder.UseInMemoryDatabase("inmemorydb");
             });
-
-           
+            
             services.AddSingleton(new PresenceService.Options() { UpdatePeriod = TimeSpan.FromMinutes(1) });
             services.AddFusion();
             var fusion = services.AddFusion();
@@ -229,7 +246,7 @@ namespace OpenDokoBlazor.Server
                 app.UseHsts();
             }
 
-            app.UseSerilogRequestLogging();
+            //app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
 
             app.UseWebSockets(new WebSocketOptions()

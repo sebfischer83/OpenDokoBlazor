@@ -133,7 +133,7 @@ namespace OpenDokoBlazor.Shared.Mechanics
 
         public IList<ICard> GetAllPlaceableCards(IPlayer player)
         {
-            var playerDeck = _game.GetCardsForPlayer(player);
+            var playerDeck = _game.GetCardsForPlayer(player.Id);
             List<ICard> cards = new List<ICard>();
             cards.AddRange(playerDeck.Cards.Where(c => CanCardBePlaced(c, playerDeck)));
 
